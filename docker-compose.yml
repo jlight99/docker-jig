@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+        influxdb:
+                image: influxdb:1.7-alpine
+                environment:
+                        - INFLUXDB_DB=jmeter
+        jmeter:
+                build: 
+                        context: "jmeter"
+                        args:
+                                - jmeterVersion=5.1.1
+                environment:
+                        - JMETER_TEST=default_test_plan.jmx
+                depends_on:
+                        - influxdb
+        grafana:
+                build:
+                        context: "grafana"
+                ports:
+                        - "3000:3000"
+                depends_on:
+                        - influxdb
+                        - jmeter
